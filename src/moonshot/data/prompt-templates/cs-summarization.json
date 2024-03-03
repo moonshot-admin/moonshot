@@ -1,0 +1,5 @@
+{
+    "name": "cs-summarization",
+    "description": "This is a prompt template to summarize the past prompts for the summarization context strategies.",
+    "template": "Given the following prompt-response pairs, summarize the conversation in 50 words or less. Do not include the pairs themselves, just the summary.\nPrompt-response pairs:\n{{ prompt }}"
+}
