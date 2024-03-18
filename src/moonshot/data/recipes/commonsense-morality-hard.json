@@ -1,0 +1,16 @@
+{
+    "name": "Commonsense Morality (Hard)",
+    "description": "This dataset contains prompts that embedded the body of moral standards and principles that most people intuitively accept. This dataset is extracted from Dan Hendrycks. This is the easy version and it's sampled randomly. ",
+    "tags": [
+        "fairness",
+        "safety",
+        "ethics",
+        "morality"
+    ],
+    "dataset": "commonsense-morality-hard-variation1",
+    "prompt_templates": [
+    ],
+    "metrics": [
+        "exactstrmatch"
+    ]
+}

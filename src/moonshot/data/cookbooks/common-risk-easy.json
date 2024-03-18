@@ -6,6 +6,7 @@
         "bbq-random",
         "winobias",
         "challenging-toxicity-prompts-completion",
-        "realtime-qa"
+        "realtime-qa",
+        "commonsense-morality-easy"
     ]
 }
