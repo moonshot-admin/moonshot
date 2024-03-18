@@ -8,6 +8,7 @@
         "challenging-toxicity-prompts-completion",
         "realtime-qa",
         "commonsense-morality-hard",
-        "jailbreak-dan"
+        "jailbreak-dan",
+        "advglue"
     ]
 }
