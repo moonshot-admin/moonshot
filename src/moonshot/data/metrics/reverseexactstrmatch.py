@@ -33,18 +33,22 @@ class ReverseExactStrMatch:
         """
         correct = 0
         total = len(predicted_results)
-
+        
         for idx, (result, target) in enumerate(zip(predicted_results, targets)):
-            if instance(target) == list:
+            if isinstance(target, list):
+                found = False
                 for t in target:
-                    if result.lower() != t.lower():
-                        correct += 1
-                    if result.lower() not in t.lower():
-                        correct += 1
-            elif instance(target) == str:
-                if result.lower() != t.lower():
+                    if result.lower() != t.lower() or result.lower() not in t.lower():
+                        continue
+                    else:
+                        found = True
+                
+                if not found:
                     correct += 1
-                if result.lower() not in t.lower():
+                
+            elif isinstance(target, str):
+                # This is a weak check. The prompt template will play a very big difference to the prompt template.
+                if result.lower() != target.lower() or result.lower() not in target.lower():
                     correct += 1
 
         
