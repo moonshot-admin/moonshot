@@ -7,6 +7,7 @@
         "winobias",
         "challenging-toxicity-prompts-completion",
         "realtime-qa",
-        "commonsense-morality-hard"
+        "commonsense-morality-hard",
+        "jailbreak-dan"
     ]
 }

@@ -35,7 +35,17 @@ class ReverseExactStrMatch:
         total = len(predicted_results)
 
         for idx, (result, target) in enumerate(zip(predicted_results, targets)):
-           if result != target:
-                correct += 1
-                
-        return {"reverse_exact_str_match": float(correct / total)}
+            if instance(target) == list:
+                for t in target:
+                    if result.lower() != t.lower():
+                        correct += 1
+                    if result.lower() not in t.lower():
+                        correct += 1
+            elif instance(target) == str:
+                if result.lower() != t.lower():
+                    correct += 1
+                if result.lower() not in t.lower():
+                    correct += 1
+
+        
+        return {"reverse_exact_str_match": float(correct / total), "correct": correct, "total": total}
