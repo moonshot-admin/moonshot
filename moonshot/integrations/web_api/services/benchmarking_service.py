@@ -97,7 +97,7 @@ class BenchmarkingService(BaseService):
     
     @exception_handler
     async def execute_cookbook(self, cookbook_executor_data: CookbookExecutorCreateDTO) -> str:
-        id = self.benchmark_test_manager.schedule_test_task(cookbook_executor_data);
+        id = await self.benchmark_test_manager.schedulte_test_task_in_queue(cookbook_executor_data);
         return id
 
     @exception_handler

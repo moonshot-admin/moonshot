@@ -4,9 +4,11 @@ from typing import Any, TypedDict
 from slugify import slugify
 from dependency_injector.wiring import inject
 
+# TODO - ms lib should expose this enum at interface level
 from moonshot.src.benchmarking.executors.benchmark_executor_types import BenchmarkExecutorTypes
 
 from .... import api as moonshot_api
+from ..services.queue.implementation.in_memory_queue import InMemoryQueue
 from ..types.types import CookbookTestRunProgress
 from ..services.benchmark_test_state import BenchmarkTestState
 from ..schemas.recipe_executor_create_dto import RecipeExecutorCreateDTO
@@ -19,9 +21,14 @@ class BenchmarkTaskInfo(TypedDict):
     status: CookbookTestRunProgress | None
 class BenchmarkTestManager(BaseService):
     @inject
-    def __init__(self, benchmark_test_state: BenchmarkTestState, webhook: Webhook) -> None:
+    def __init__(self,
+            benchmark_test_state: BenchmarkTestState,
+            webhook: Webhook,
+            benchmark_queue: InMemoryQueue[CookbookExecutorCreateDTO | RecipeExecutorCreateDTO]) -> None:
         self.benchmark_test_state = benchmark_test_state
         self.webhook = webhook
+        self.benchmark_queue = benchmark_queue
+        self.init_queue()
         super().__init__()
 
     def generate_unique_task_id(self) -> str:
@@ -102,4 +109,16 @@ class BenchmarkTestManager(BaseService):
         # Id getter needs review. Read comments in function
         id = self.get_executor_id(type, executor_input_data.name)
         self.add_task(id, task)
+        return id
+    
+    def benchmark_job_worker(self, task: CookbookExecutorCreateDTO | RecipeExecutorCreateDTO) -> None:
+        self.logger.info(f"Executing benchmark job with details:\n{task}")
+
+    def init_queue(self) -> None:
+        self.benchmark_queue.subscribe(self.benchmark_job_worker)
+    
+    async def schedulte_test_task_in_queue(self, executor_input_data: CookbookExecutorCreateDTO) -> str:
+        type = BenchmarkExecutorTypes.COOKBOOK
+        id = self.get_executor_id(type, executor_input_data.name)
+        self.benchmark_queue.publish(executor_input_data)
         return id

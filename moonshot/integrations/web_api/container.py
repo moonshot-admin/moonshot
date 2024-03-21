@@ -1,6 +1,8 @@
 from dependency_injector import containers, providers
+from moonshot.integrations.web_api.schemas.cookbook_executor_create_dto import CookbookExecutorCreateDTO
 
 from moonshot.integrations.web_api.services.benchmark_test_state import BenchmarkTestState
+from moonshot.integrations.web_api.services.queue.implementation.in_memory_queue import InMemoryQueue
 
 from .status_updater.webhook import Webhook
 from .services.benchmarking_service import BenchmarkingService
@@ -37,14 +39,19 @@ class Container(containers.DeclarativeContainer):
     })
 
     benchmark_test_state: providers.Singleton[BenchmarkTestState] = providers.Singleton(BenchmarkTestState)
+    benchmark_queue: providers.Singleton[InMemoryQueue[CookbookExecutorCreateDTO]] = providers.Singleton(
+        InMemoryQueue,
+        queue_name="benchmark_queue"
+    )
     webhook: providers.Singleton[Webhook] = providers.Singleton(
         Webhook,
         benchmark_test_state=benchmark_test_state)
     benchmark_test_manager: providers.Singleton[BenchmarkTestManager] = providers.Singleton(
         BenchmarkTestManager,
         benchmark_test_state=benchmark_test_state,
-        webhook=webhook)
-    session_service: providers.Factory[SessionService] = providers.Factory(SessionService)
+        webhook=webhook,
+        benchmark_queue=benchmark_queue)
+    session_service: providers.Singleton[SessionService] = providers.Singleton(SessionService)
     benchmarking_service: providers.Singleton[BenchmarkingService] = providers.Singleton(
         BenchmarkingService,
         benchmark_test_manager=benchmark_test_manager,
